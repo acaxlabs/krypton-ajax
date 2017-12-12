@@ -1,0 +1,120 @@
+﻿<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../iron-ajax/iron-ajax.html" />
+<link rel="import" href="../paper-toast/paper-toast.html" />
+
+<!--
+`<krypton-ajax>` iron-ajax wrapper also handles/displays errors from .NET Web APIs.
+
+Example:
+
+    <krypton-ajax id="ajax"
+                          auto
+                          url="https://www.mocky.io/v2/5a302ceb2d00008733a83d8a"
+                          last-response="{{item}}"
+                          on-response="_onResponse"
+                          on-error="_onError"
+                          loading="{{loading}}">
+            </krypton-ajax>
+
+@element krypton-ajax
+@demo demo/index.html
+-->
+
+<dom-module id="krypton-ajax">
+    <template>
+        <iron-ajax id="ajax"
+                   auto="[[auto]]"
+                   url="[[url]]"
+                   body="[[body]]"
+                   params="[[params]]"
+                   method="[[method]]"
+                   handle-as="json"
+                   on-response="_onResponse"
+                   content-type="application/json"
+                   last-error="{{lastError}}"
+                   on-error="_onError"
+                   loading="{{loading}}"
+                   headers="{{headers}}"
+                   debounce-duration="[[debounceDuration]]">
+        </iron-ajax>
+        <paper-toast id="toaster"></paper-toast>
+    </template>
+    <script>
+        Polymer({
+            is: "krypton-ajax",
+            properties: {
+                /* See iron-ajax lastResponse property */
+                lastResponse: { type: Object, notify: true },
+                /* See iron-ajax lastError property */
+                lastError: { type: Object, notify: true },
+                /* See iron-ajax body property  */
+                body: { type: Object, notify: true },
+                /* See iron-ajax params property  */
+                params: { type: Object, notify: true },
+                /* See iron-ajax url property  */
+                url: { type: String, notify: true },
+                /* See iron-ajax method property  */
+                method: { type: String, notify: true },
+                /* See iron-ajax  */
+                debounceDuration: { type: Number, notify: true },
+                /* Flag to indicate if a request is in flight*/
+                loading: { type: Boolean, notify: true, value: false },
+                /* See iron-ajax  */
+                headers: { type: Object, value: function () { return {}; } },
+                /* Flag to indicate if a errors should be toasted automatically*/
+                autoShowToast: { type: Boolean, notify: true, value: true },
+                /* See iron-ajax*/
+                auto: { type: Boolean, notify: true, value: false, reflectToAttribute:true }
+            },
+            _onResponse: function (e, request) {
+                this.set("lastResponse", e.detail.response);
+                request.method = e.target.method;
+                this.fire("response", request, { bubbles: false });
+                this.fire("krypton-ajax-response", { response: e.detail.response, request: request });
+            },
+            _onError: function (e, detail) {
+                if (this.lastError == null) return;
+                
+                var message = "";
+                if (this.lastError.status == 400) {
+                    message = this.lastError.response.message || (this.lastError.statusText || "Bad request" );
+                    if (this.lastError.response.modelState) {
+                        var keys = Object.keys(this.lastError.response.modelState);
+                        for (var i = 0; i < keys.length; i++) {
+                            var k = keys[i];
+                            message = message.concat(this.lastError.response.modelState[k].join(), " ")
+                        }
+                    }
+                }
+                if (this.lastError.status == 401) {
+                    console.log("lastError", this.lastError);
+                    message = "Unauthorized Access";
+                }
+                if (this.lastError.status == 403) {
+                    console.log("lastError", this.lastError);
+                    message = "Forbidden";
+                }
+                if (this.lastError.status == 404) {
+                    console.log("lastError", this.lastError);
+                    message = "Not found";
+                }
+                if (this.lastError.status == 500) {
+                    message = this.lastError.response.exceptionMessage || (this.lastError.response.message || "An error has occured");
+                }
+                
+                if (!this.autoShowToast) return;
+                this._showToast(message);
+                this.fire("error", this.lastError)
+                this.fire("krypton-ajax-error", this.lastError);
+            },
+            _showToast: function (msg) {
+                if (msg === undefined) return;
+                this.$.toaster.text = msg;
+                this.$.toaster.show();
+            },
+            generateRequest: function () {
+                return this.$.ajax.generateRequest();
+            }
+        });
+    </script>
+</dom-module>

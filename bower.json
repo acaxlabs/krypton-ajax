@@ -1,0 +1,17 @@
+{
+  "name": "krypton-ajax",
+  "authors": [
+    "Joshua Hickerson <joshdotexe@gmail.com>"
+  ],
+  "description": "iron-ajax wrapper also handles/displays errors from .NET Web APIs",
+  "main": "",
+  "license": "MIT",
+  "homepage": "https://github.com/acaxlabs/krypton-ajax",
+  "ignore": [],
+  "dependencies": {
+    "paper-toast": "polymerelements/paper-toast#^1.0.0",
+    "iron-ajax": "polymerelements/iron-ajax#^1.0.0",
+    "polymer": "Polymer/polymer#^1.1.0",
+    "iron-component-page": "polymerelements/iron-component-page#^1.0.0"
+  }
+}

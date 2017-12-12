@@ -1,0 +1,36 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="../../webcomponentsjs/webcomponents.min.js"></script>
+    <link rel="import" href="../krypton-ajax.html"/>
+</head>
+<body>
+    <dom-module id="demo-master">
+        <template>
+            <krypton-ajax id="ajax"
+                          auto
+                          url="https://www.mocky.io/v2/5a302ceb2d00008733a83d8a"
+                          last-response="{{item}}"
+                          on-response="_onResponse"
+                          on-error="_onError"
+                          loading="{{loading}}">
+            </krypton-ajax>
+            <div>[[item.data]]</div>
+        </template>
+        <script>
+		Polymer({
+            is: "demo-master",
+            _onError: function (e) {
+                console.log(e.detail);
+            },
+            _onResponse: function (e) {
+                console.log(e.detail);
+            }
+		});
+        </script>
+    </dom-module>
+    <demo-master></demo-master>
+</body>
+</html>
