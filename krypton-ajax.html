@@ -1,4 +1,4 @@
-﻿<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../polymer/polymer.html" />
 <link rel="import" href="../iron-ajax/iron-ajax.html" />
 <link rel="import" href="../paper-toast/paper-toast.html" />
 
@@ -28,9 +28,9 @@ Example:
                    body="[[body]]"
                    params="[[params]]"
                    method="[[method]]"
-                   handle-as="json"
+                   handle-as="[[handleAs]]"
                    on-response="_onResponse"
-                   content-type="application/json"
+                   content-type="[[contentType]]"
                    last-error="{{lastError}}"
                    on-error="_onError"
                    loading="{{loading}}"
@@ -55,6 +55,10 @@ Example:
                 url: { type: String, notify: true },
                 /* See iron-ajax method property  */
                 method: { type: String, notify: true },
+                /* See iron-ajax method property  */
+                contentType: { type: String, notify: true },
+                /* See iron-ajax method property  */
+                handleAs: { type: String, notify: true },
                 /* See iron-ajax  */
                 debounceDuration: { type: Number, notify: true },
                 /* Flag to indicate if a request is in flight*/
@@ -71,6 +75,10 @@ Example:
                 request.method = e.target.method;
                 this.fire("response", request, { bubbles: false });
                 this.fire("krypton-ajax-response", { response: e.detail.response, request: request });
+                var eventName = e.detail.root.getAttribute("krypton-event-name");
+                if (eventName) {
+                    this.fire(eventName, e.detail.response);
+                }
             },
             _onError: function (e, detail) {
                 if (this.lastError == null) return;
@@ -112,8 +120,11 @@ Example:
                 this.$.toaster.text = msg;
                 this.$.toaster.show();
             },
-            generateRequest: function () {
-                return this.$.ajax.generateRequest();
+            generateRequest: function (eventName) {
+                var req = this.$.ajax.generateRequest();
+                if (eventName) {
+                    req.setAttribute("krypton-event-name", eventName);
+                }
             }
         });
     </script>
