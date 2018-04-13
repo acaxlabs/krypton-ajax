@@ -23,19 +23,19 @@ Example:
 <dom-module id="krypton-ajax">
     <template>
         <iron-ajax id="ajax"
-                   auto="[[auto]]"
-                   url="[[url]]"
-                   body="[[body]]"
-                   params="[[params]]"
-                   method="[[method]]"
-                   handle-as="[[handleAs]]"
+                   auto="{{auto}}"
+                   url="{{url}}"
+                   body="{{body}}"
+                   params="{{params}}"
+                   method="{{method}}"
+                   handle-as="{{handleAs}}"
                    on-response="_onResponse"
-                   content-type="[[contentType]]"
+                   content-type="{{contentType}}"
                    last-error="{{lastError}}"
                    on-error="_onError"
                    loading="{{loading}}"
                    headers="{{headers}}"
-                   debounce-duration="[[debounceDuration]]">
+                   debounce-duration="{{debounceDuration}}">
         </iron-ajax>
         <paper-toast id="toaster"></paper-toast>
     </template>
@@ -56,7 +56,7 @@ Example:
                 /* See iron-ajax method property  */
                 method: { type: String, notify: true },
                 /* See iron-ajax method property  */
-                contentType: { type: String, notify: true, value:"application/json" },
+                contentType: { type: String, notify: true, value:"application/json"  },
                 /* See iron-ajax method property  */
                 handleAs: { type: String, notify: true },
                 /* See iron-ajax  */
